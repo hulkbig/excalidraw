@@ -968,12 +968,17 @@ const DEFAULT_LINE_HEIGHT = {
   // Gecko if all over the place.
   [FONT_FAMILY.Helvetica]: 1.15 as ExcalidrawTextElement["lineHeight"],
   // ~1.2 is the average for Virgil in WebKit and Blink, and kinda Gecko too
-  [FONT_FAMILY.Cascadia]: 1.2 as ExcalidrawTextElement["lineHeight"],
+  [FONT_FAMILY.Cascadia]: 1.2 as ExcalidrawTextElement["lineHeight"],  
 };
+
+const DEFAULT_LINE_HEIGHT_FALLBACK = 1.2 as ExcalidrawTextElement["lineHeight"];
 
 export const getDefaultLineHeight = (fontFamily: FontFamilyValues) => {
   if (fontFamily in DEFAULT_LINE_HEIGHT) {
+    if (typeof fontFamily === "string") {
+      return DEFAULT_LINE_HEIGHT_FALLBACK;
+    }
     return DEFAULT_LINE_HEIGHT[fontFamily];
   }
-  return DEFAULT_LINE_HEIGHT[DEFAULT_FONT_FAMILY];
+  return DEFAULT_LINE_HEIGHT_FALLBACK;
 };

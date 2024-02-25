@@ -1502,6 +1502,25 @@ export const FontFamilyCodeIcon = createIcon(
   modifiedTablerIconProps,
 );
 
+export const FontFamilyChineseIcon = createIcon(
+  <>
+    <g clipPath="url(#a)"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <text x="50%" y="50%" font-size="14" fill="#a2a9b6" font-family="system-ui, sans-serif" text-anchor="middle" dominant-baseline="middle">文</text>
+    </g>
+    <defs>
+      <clipPath id="a">
+        <path fill="#fff" d="M0 0h1024v1024H0z" />
+      </clipPath>
+    </defs>
+  </>,
+  modifiedTablerIconProps,
+);
+
 export const TextAlignLeftIcon = createIcon(
   <g
     stroke="currentColor"

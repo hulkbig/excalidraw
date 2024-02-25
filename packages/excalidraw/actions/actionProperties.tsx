@@ -41,6 +41,7 @@ import {
   FreedrawIcon,
   FontFamilyNormalIcon,
   FontFamilyCodeIcon,
+  FontFamilyChineseIcon,
   TextAlignLeftIcon,
   TextAlignCenterIcon,
   TextAlignRightIcon,
@@ -771,7 +772,7 @@ export const actionChangeFontFamily = register({
         text: t("labels.code"),
         icon: FontFamilyCodeIcon,
         testId: "font-family-code",
-      },
+      }
     ];
 
     return (
@@ -779,6 +780,97 @@ export const actionChangeFontFamily = register({
         <legend>{t("labels.fontFamily")}</legend>
         <ButtonIconSelect<FontFamilyValues | false>
           group="font-family"
+          options={options}
+          value={getFormValue(
+            elements,
+            appState,
+            (element) => {
+              if (isTextElement(element)) {
+                return element.fontFamily;
+              }
+              const boundTextElement = getBoundTextElement(
+                element,
+                app.scene.getNonDeletedElementsMap(),
+              );
+              if (boundTextElement) {
+                return boundTextElement.fontFamily;
+              }
+              return null;
+            },
+            (element) =>
+              isTextElement(element) ||
+              getBoundTextElement(
+                element,
+                app.scene.getNonDeletedElementsMap(),
+              ) !== null,
+            (hasSelection) =>
+              hasSelection
+                ? null
+                : appState.currentItemFontFamily || DEFAULT_FONT_FAMILY,
+          )}
+          onChange={(value) => updateData(value)}
+        />
+      </fieldset>
+    );
+  },
+});
+
+export const actionChangeChineseFontFamily = register({
+  name: "changeChineseFontFamily",
+  trackEvent: false,
+  perform: (elements, appState, value, app) => {
+    return {
+      elements: changeProperty(
+        elements,
+        appState,
+        (oldElement) => {
+          if (isTextElement(oldElement)) {
+            const newElement: ExcalidrawTextElement = newElementWith(
+              oldElement,
+              {
+                fontFamily: value,
+                lineHeight: getDefaultLineHeight(value),
+              },
+            );
+            redrawTextBoundingBox(
+              newElement,
+              app.scene.getContainerElement(oldElement),
+              app.scene.getNonDeletedElementsMap(),
+            );
+            return newElement;
+          }
+
+          return oldElement;
+        },
+        true,
+      ),
+      appState: {
+        ...appState,
+        currentItemFontFamily: value,
+      },
+      commitToHistory: true,
+    };
+  },
+  PanelComponent: ({ elements, appState, updateData, app }) => {
+    const options: {
+      value: FontFamilyValues;
+      text: string;
+      icon: JSX.Element;
+      testId: string;
+    }[] = [
+      {
+        value: FONT_FAMILY.Cascadia,
+        text: t("labels.code"),
+        icon: FontFamilyChineseIcon,
+        testId: "chinese-font-family-code",
+      },  
+    ];
+
+    return (
+      <fieldset>
+        <legend>{t("labels.chineseFontFamily")}</legend>
+        <ButtonIconSelect<FontFamilyValues | false>
+          group="chinese-font-family"
           options={options}
           value={getFormValue(
             elements,

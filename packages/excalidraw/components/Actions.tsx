@@ -136,6 +136,8 @@ export const SelectedShapeActions = ({
 
           {renderAction("changeFontFamily")}
 
+          {renderAction("changeChineseFontFamily")}
+
           {(appState.activeTool.type === "text" ||
             suppportsHorizontalAlign(targetElements, elementsMap)) &&
             renderAction("changeTextAlign")}

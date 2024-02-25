@@ -46,6 +46,7 @@
     "arrowhead_diamond_outline": "Diamond (outline)",
     "fontSize": "Font size",
     "fontFamily": "Font family",
+    "chineseFontFamily": "Chinese Font family",
     "addWatermark": "Add \"Made with Excalidraw\"",
     "handDrawn": "Hand-drawn",
     "normal": "Normal",
