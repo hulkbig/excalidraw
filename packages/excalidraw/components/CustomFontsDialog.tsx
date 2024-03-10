@@ -4,10 +4,9 @@ import { TextField } from "./TextField";
 import DialogActionButton from "./DialogActionButton";
 import { KEYS } from "../keys";
 import { InlineIcon } from "./InlineIcon";
-import { FontFamilyNormalIcon, FontFamilyCodeIcon, FreedrawIcon } from './icons';
+import { FontFamilyNormalIcon, FontFamilyCodeIcon, FreedrawIcon, save } from './icons';
 import { Paragraph } from "./Paragraph";
-import { EDITOR_LS_KEYS } from '../constants';
-import { EditorLocalStorage } from "../data/EditorLocalStorage";
+import { loadDefaultFonts, loadCustomFonts, saveCustomFonts, preloadCustomFonts } from "../font";
 
 import "./CustomFontsDialog.scss";
 
@@ -19,19 +18,10 @@ export const CustomFontsDialog = (props: {
   const [handwritingFont, setHandwritingFont] = useState<string>("https://excalidraw-zh.com/fonts/Xiaolai.woff2");
   const [normalFont, setNormalFont] = useState<string>("");
   const [codeFont, setCodeFont] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!EditorLocalStorage.has(EDITOR_LS_KEYS.CUSTOM_FONTS)) {
-      return;
-    }
-    const customFonts = EditorLocalStorage.get(EDITOR_LS_KEYS.CUSTOM_FONTS) as {
-      handwritingFont: string | null;
-      normalFont: string | null;
-      codeFont: string | null;
-    } | null;
-    if (!customFonts) {
-      return;
-    }
+    const customFonts = loadCustomFonts() || loadDefaultFonts() || { handwritingFont: null, normalFont: null, codeFont: null };
     if (customFonts.handwritingFont) {
       setHandwritingFont(customFonts.handwritingFont);
     }
@@ -43,17 +33,17 @@ export const CustomFontsDialog = (props: {
     }
   }, [])
 
-  const onConfirm = () => {
-    if (handwritingFont || normalFont || codeFont) {
-      EditorLocalStorage.set(EDITOR_LS_KEYS.CUSTOM_FONTS, {
-        handwritingFont: handwritingFont,
-        normalFont: normalFont,
-        codeFont: codeFont,
-      });
-      window.location.reload();
-      return;
+  const onConfirm = async () => {
+    const customFonts = {
+      handwritingFont: handwritingFont || null,
+      normalFont: normalFont || null,
+      codeFont: codeFont || null,
     }
-    props.onClose();
+    saveCustomFonts(customFonts);
+    setLoading(true);
+    await preloadCustomFonts(customFonts);
+    setLoading(false);
+    window.location.reload();
   }
 
   return (
@@ -145,7 +135,7 @@ export const CustomFontsDialog = (props: {
       <DialogActionButton
         label="Confirm"
         actionType="primary"
-        isLoading={false}
+        isLoading={loading}
         onClick={onConfirm}
       />
 
